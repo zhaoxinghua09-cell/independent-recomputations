@@ -7,7 +7,7 @@ data/vectors.json, which the mcp-tool-set-digest repository offers under Apache-
 
 Exit code 0 means both files are present and hash exactly as recorded.
 """
-import hashlib, pathlib, sys, urllib.request
+import hashlib, pathlib, sys, time, urllib.request
 
 HERE = pathlib.Path(__file__).parent
 DATA = HERE / "data"
@@ -29,10 +29,17 @@ TARGETS = [
 ]
 
 
-def get(url, timeout=90):
-    req = urllib.request.Request(url, headers={"User-Agent": "curl/8.4.0"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read()
+def get(url, timeout=90, attempts=4):
+    last = None
+    for i in range(attempts):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "curl/8.4.0"})
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read()
+        except Exception as e:
+            last = e
+            time.sleep(2 * (i + 1))
+    raise last
 
 
 def main():
