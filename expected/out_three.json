@@ -1,0 +1,91 @@
+{
+  "vectors_total": 3,
+  "pass": 3,
+  "fail": 0,
+  "rows": [
+    {
+      "id": "extras-present",
+      "note": "The same tool with title, annotations, icons, _meta and a vendor member: the same contract digest, and now an extras digest.",
+      "pass": true,
+      "detail": [],
+      "computed": {
+        "contract": {
+          "digest": "sha256-STggL/HUXqt3jDrkW0VjuXTQSAUlNhFLFXV4U7rCNW4=",
+          "hex": "sha256:4938202ff1d45eab778c3ae45b4563b974d048052536114b15757853bac2356e",
+          "canonical": "[{\"description\":\"Delete a file.\",\"inputSchema\":{\"properties\":{\"path\":{\"type\":\"string\"}},\"type\":\"object\"},\"name\":\"delete_file\"}]"
+        },
+        "extras": {
+          "digest": "sha256-wX92gKaH+OnpCBJ4vZtpJlpvPpH07+gELUsjSrJu+L0=",
+          "hex": "sha256:c17f7680a687f8e9e9081278bd9b69265a6f3e91f4efe8042d4b234ab26ef8bd",
+          "canonical": "{\"tools\":{\"delete_file\":{\"_meta\":{\"com.example/price\":\"0.01\"},\"annotations\":{\"destructiveHint\":true,\"readOnlyHint\":false},\"icons\":[{\"src\":\"https://example.com/i.png\"}],\"title\":\"Delete file\",\"x-vendor\":{\"tier\":2}}}}"
+        }
+      },
+      "expected": {
+        "contract_error": null,
+        "extras_error": null,
+        "contract_digest": "sha256-STggL/HUXqt3jDrkW0VjuXTQSAUlNhFLFXV4U7rCNW4=",
+        "extras_digest": "sha256-wX92gKaH+OnpCBJ4vZtpJlpvPpH07+gELUsjSrJu+L0=",
+        "contract_hex": "sha256:4938202ff1d45eab778c3ae45b4563b974d048052536114b15757853bac2356e",
+        "extras_hex": "sha256:c17f7680a687f8e9e9081278bd9b69265a6f3e91f4efe8042d4b234ab26ef8bd",
+        "contract_canonical": "[{\"description\":\"Delete a file.\",\"inputSchema\":{\"properties\":{\"path\":{\"type\":\"string\"}},\"type\":\"object\"},\"name\":\"delete_file\"}]",
+        "extras_canonical": "{\"tools\":{\"delete_file\":{\"_meta\":{\"com.example/price\":\"0.01\"},\"annotations\":{\"destructiveHint\":true,\"readOnlyHint\":false},\"icons\":[{\"src\":\"https://example.com/i.png\"}],\"title\":\"Delete file\",\"x-vendor\":{\"tier\":2}}}}"
+      }
+    },
+    {
+      "id": "extras-annotation-flipped",
+      "note": "destructiveHint true becomes false: the contract digest does not move, the extras digest does.",
+      "pass": true,
+      "detail": [],
+      "computed": {
+        "contract": {
+          "digest": "sha256-STggL/HUXqt3jDrkW0VjuXTQSAUlNhFLFXV4U7rCNW4=",
+          "hex": "sha256:4938202ff1d45eab778c3ae45b4563b974d048052536114b15757853bac2356e",
+          "canonical": "[{\"description\":\"Delete a file.\",\"inputSchema\":{\"properties\":{\"path\":{\"type\":\"string\"}},\"type\":\"object\"},\"name\":\"delete_file\"}]"
+        },
+        "extras": {
+          "digest": "sha256-SXZm+FJzpls6lPks/a7tKZ8BzXCgvMNv1BUoY8I1ArE=",
+          "hex": "sha256:497666f85273a65b3a94f92cfdaeed299f01cd70a0bcc36fd4152863c23502b1",
+          "canonical": "{\"tools\":{\"delete_file\":{\"_meta\":{\"com.example/price\":\"0.01\"},\"annotations\":{\"destructiveHint\":false,\"readOnlyHint\":false},\"icons\":[{\"src\":\"https://example.com/i.png\"}],\"title\":\"Delete file\",\"x-vendor\":{\"tier\":2}}}}"
+        }
+      },
+      "expected": {
+        "contract_error": null,
+        "extras_error": null,
+        "contract_digest": "sha256-STggL/HUXqt3jDrkW0VjuXTQSAUlNhFLFXV4U7rCNW4=",
+        "extras_digest": "sha256-SXZm+FJzpls6lPks/a7tKZ8BzXCgvMNv1BUoY8I1ArE=",
+        "contract_hex": "sha256:4938202ff1d45eab778c3ae45b4563b974d048052536114b15757853bac2356e",
+        "extras_hex": "sha256:497666f85273a65b3a94f92cfdaeed299f01cd70a0bcc36fd4152863c23502b1",
+        "contract_canonical": "[{\"description\":\"Delete a file.\",\"inputSchema\":{\"properties\":{\"path\":{\"type\":\"string\"}},\"type\":\"object\"},\"name\":\"delete_file\"}]",
+        "extras_canonical": "{\"tools\":{\"delete_file\":{\"_meta\":{\"com.example/price\":\"0.01\"},\"annotations\":{\"destructiveHint\":false,\"readOnlyHint\":false},\"icons\":[{\"src\":\"https://example.com/i.png\"}],\"title\":\"Delete file\",\"x-vendor\":{\"tier\":2}}}}"
+      }
+    },
+    {
+      "id": "extras-contract-changed",
+      "note": "The extras of extras-present under another description: another contract digest, the same extras digest.",
+      "pass": true,
+      "detail": [],
+      "computed": {
+        "contract": {
+          "digest": "sha256-VMe8mUMWdZEmdseQBl60uev9KuQ9hVUOy40KKPTkKlg=",
+          "hex": "sha256:54c7bc99431675912676c790065eb4b9ebfd2ae43d85550ecb8d0a28f4e42a58",
+          "canonical": "[{\"description\":\"Delete a file or a folder.\",\"inputSchema\":{\"properties\":{\"path\":{\"type\":\"string\"}},\"type\":\"object\"},\"name\":\"delete_file\"}]"
+        },
+        "extras": {
+          "digest": "sha256-wX92gKaH+OnpCBJ4vZtpJlpvPpH07+gELUsjSrJu+L0=",
+          "hex": "sha256:c17f7680a687f8e9e9081278bd9b69265a6f3e91f4efe8042d4b234ab26ef8bd",
+          "canonical": "{\"tools\":{\"delete_file\":{\"_meta\":{\"com.example/price\":\"0.01\"},\"annotations\":{\"destructiveHint\":true,\"readOnlyHint\":false},\"icons\":[{\"src\":\"https://example.com/i.png\"}],\"title\":\"Delete file\",\"x-vendor\":{\"tier\":2}}}}"
+        }
+      },
+      "expected": {
+        "contract_error": null,
+        "extras_error": null,
+        "contract_digest": "sha256-VMe8mUMWdZEmdseQBl60uev9KuQ9hVUOy40KKPTkKlg=",
+        "extras_digest": "sha256-wX92gKaH+OnpCBJ4vZtpJlpvPpH07+gELUsjSrJu+L0=",
+        "contract_hex": "sha256:54c7bc99431675912676c790065eb4b9ebfd2ae43d85550ecb8d0a28f4e42a58",
+        "extras_hex": "sha256:c17f7680a687f8e9e9081278bd9b69265a6f3e91f4efe8042d4b234ab26ef8bd",
+        "contract_canonical": "[{\"description\":\"Delete a file or a folder.\",\"inputSchema\":{\"properties\":{\"path\":{\"type\":\"string\"}},\"type\":\"object\"},\"name\":\"delete_file\"}]",
+        "extras_canonical": "{\"tools\":{\"delete_file\":{\"_meta\":{\"com.example/price\":\"0.01\"},\"annotations\":{\"destructiveHint\":true,\"readOnlyHint\":false},\"icons\":[{\"src\":\"https://example.com/i.png\"}],\"title\":\"Delete file\",\"x-vendor\":{\"tier\":2}}}}"
+      }
+    }
+  ]
+}

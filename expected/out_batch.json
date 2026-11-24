@@ -1,0 +1,12 @@
+{
+  "file": "data/a2a_card.capsules.jsonl.gz",
+  "capsules": 33,
+  "jcs_exact_lines": 33,
+  "problems": [],
+  "ascending_by_id": true,
+  "duplicates": false,
+  "root_rfc9162": "bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436",
+  "root_duplicate_last_leaf": "e949bf1d44cb00f8c4e9144cf244e0b197171ba950aac82c6264df0467302727",
+  "expected_root": "bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436",
+  "root_matches": true
+}
