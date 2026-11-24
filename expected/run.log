@@ -1,20 +1,35 @@
-# independent Linux run, 2026-11-24T05:21:26Z, host vefaas-ig0wu6wv-y5xygf9zjl-dc2hsr83d6r78t9iq7ig-sandbox
-# python Python 3.12.11
+# independent Linux run, 2026-11-24T07:08:05Z, commit 2e6248800f20f54e5151ee4c6635c2b3f36727bf
+# python 3.12.11 on vefaas-ig0wu6wv-y5xygf9zjl-dc2hsr83d6r78t9iq7ig-sandbox
+# commands are the ones in README.md, run in a fresh anonymous clone
 
+$ python3 fetch_data.py
+OK (already present) data/vectors.json
+OK (already present) data/a2a_card.capsules.jsonl.gz
+OK (already present) data/a2a_card.record.json
+rc=0
+
+$ python3 tsd_digest.py --vectors data/vectors.json --out out_vectors.json
+
+92 vectors, 92 pass, 0 fail
+rc=0
+
+$ python3 tsd_digest.py --vectors data/vectors.json --ids extras-present,extras-annotation-flipped,extras-contract-changed --out out_three.json
 PASS extras-present
 PASS extras-annotation-flipped
 PASS extras-contract-changed
 
 3 vectors, 3 pass, 0 fail
-EXIT=0
+rc=0
 
+$ python3 capsule_batch.py --file data/a2a_card.capsules.jsonl.gz --expect-root bf12f4ad... --record data/a2a_card.record.json --out out_batch.json
 capsules=33 jcs_exact=33 problems=0 ascending=True duplicates=False
 root=bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436
 expected=bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436 match=True
 duplicate-last-leaf root=e949bf1d44cb00f8c4e9144cf244e0b197171ba950aac82c6264df0467302727 differs=True
-EXIT=0
+states=FAILED:8, UNCHECKABLE:12, VERIFIED:13
+record={"capsules_file_sha256": true, "merkle_root": true, "n_capsules": true, "states": true}
+rc=0
 
-ba413e8160120205d8b9ec87fec95fa9e0f3ac2e6c858d4e6e807851882cd661  data/a2a_card.capsules.jsonl.gz
-1b1e6706681755740faa85966ece46150ffc70ba452113dc9ae05eb2357d63eb  data/vectors.json
-04ca8000d2ed2cdd2c18613efdb64fe33ca116f4b23b830cb4a04d74cd11efe7  capsule_batch.py
-72e0010ae06beb090beddf9fca491cdebb3c8d1dab9aa7559d4f210b2d9edd59  tsd_digest.py
+# the three outputs written there are byte-identical to expected/out_three.json and
+# expected/out_batch.json in this repository (json-equality checked, and equal sha256 for
+# out_batch.json: ec4aad1740e37a87...), which is what makes the two-host claim checkable.
