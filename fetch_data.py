@@ -11,6 +11,7 @@ import hashlib, pathlib, sys, time, urllib.request
 
 HERE = pathlib.Path(__file__).parent
 DATA = HERE / "data"
+RECORD_SHA = "180a16f838f33372e1e6345fb272d7b3427a55dacee5571c34a6947a116cc6b6"
 TARGETS = [
     {
         "path": DATA / "vectors.json",
@@ -25,6 +26,16 @@ TARGETS = [
         "url": "https://councilof.ai/measurement-capsules/v0.2/a2a_card/capsules.jsonl.gz",
         "alt": "",
         "sha256": "ba413e8160120205d8b9ec87fec95fa9e0f3ac2e6c858d4e6e807851882cd661",
+    },
+    {
+        "path": DATA / "a2a_card.record.json",
+        "url": "https://raw.githubusercontent.com/CSOAI-ORG/councilof-ai/"
+               "857a6cc02696cdc575c5b540f7b4ab7d043cb591/public/measurement-capsules/"
+               "v0.2/a2a_card/record.json",
+        "alt": "https://cdn.jsdelivr.net/gh/CSOAI-ORG/councilof-ai@"
+               "857a6cc02696cdc575c5b540f7b4ab7d043cb591/public/measurement-capsules/"
+               "v0.2/a2a_card/record.json",
+        "sha256": RECORD_SHA,
     },
 ]
 

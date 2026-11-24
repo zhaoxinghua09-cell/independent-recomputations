@@ -15,7 +15,7 @@ Usage:
         --expect-root bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436
 Exit code: 0 when every check passes.
 """
-import argparse, gzip, hashlib, json, sys, io
+import argparse, gzip, hashlib, json, os, sys, io
 from decimal import Decimal
 
 sys.setrecursionlimit(9000)
@@ -71,10 +71,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--file", required=True)
     ap.add_argument("--expect-root", default="")
+    ap.add_argument("--record", default="", help="the batch record JSON, to compare stated values")
     ap.add_argument("--out", default="")
     a = ap.parse_args()
 
     raw = open_maybe_gzip(a.file)
+    file_sha = hashlib.sha256(open(a.file, "rb").read()).hexdigest()
+    file_bytes = os.path.getsize(a.file)
     lines = [l for l in raw.split(b"\n") if l]
     ids, problems, exact = [], [], 0
     for i, line in enumerate(lines):
@@ -105,17 +108,48 @@ def main():
     if a.expect_root:
         print(f"expected={a.expect_root} match={root_ok}")
     print(f"duplicate-last-leaf root={alt} differs={alt != root}")
+
+    states = {}
+    for line in lines:
+        st = json.loads(line, parse_float=Decimal, parse_int=Decimal).get("measurement_state")
+        if st is not None:
+            states[st] = states.get(st, 0) + 1
+    if states:
+        print("states=" + ", ".join(f"{k}:{v}" for k, v in sorted(states.items())))
+
+    record = None
+    if a.record:
+        rec = json.load(open(a.record, encoding="utf-8"))
+        cf = rec.get("capsules_file") or {}
+        record = {
+            "as_of": rec.get("as_of"),
+            "n_capsules": rec.get("n_capsules"),
+            "merkle_root": rec.get("merkle_root"),
+            "capsules_file_sha256": cf.get("sha256"),
+            "states": rec.get("states"),
+            "matches": {
+                "n_capsules": rec.get("n_capsules") == len(lines),
+                "merkle_root": rec.get("merkle_root") == root,
+                "capsules_file_sha256": cf.get("sha256") == file_sha,
+                "states": all((rec.get("states") or {}).get(k) == v for k, v in states.items()),
+            },
+        }
+        print("record=" + json.dumps(record["matches"], sort_keys=True))
     for p in problems[:10]:
         print("  ", p)
 
-    result = {"file": a.file, "capsules": len(lines), "jcs_exact_lines": exact,
+    result = {"file": a.file, "file_sha256": file_sha, "file_bytes": file_bytes,
+              "capsules": len(lines), "jcs_exact_lines": exact, "states": states,
               "problems": problems, "ascending_by_id": ascending, "duplicates": duplicates,
               "root_rfc9162": root, "root_duplicate_last_leaf": alt,
-              "expected_root": a.expect_root or None, "root_matches": root_ok}
+              "expected_root": a.expect_root or None, "root_matches": root_ok,
+              "record": record}
     if a.out:
         json.dump(result, open(a.out, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 
     ok = (not problems) and ascending and not duplicates and (root_ok is not False)
+    if record:
+        ok = ok and all(record["matches"].values())
     return 0 if ok else 1
 
 

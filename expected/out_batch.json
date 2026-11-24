@@ -1,12 +1,36 @@
 {
-  "file": "data/a2a_card.capsules.jsonl.gz",
+  "file": "data\\a2a_card.capsules.jsonl.gz",
+  "file_sha256": "ba413e8160120205d8b9ec87fec95fa9e0f3ac2e6c858d4e6e807851882cd661",
+  "file_bytes": 7916,
   "capsules": 33,
   "jcs_exact_lines": 33,
+  "states": {
+    "FAILED": 8,
+    "UNCHECKABLE": 12,
+    "VERIFIED": 13
+  },
   "problems": [],
   "ascending_by_id": true,
   "duplicates": false,
   "root_rfc9162": "bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436",
   "root_duplicate_last_leaf": "e949bf1d44cb00f8c4e9144cf244e0b197171ba950aac82c6264df0467302727",
   "expected_root": "bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436",
-  "root_matches": true
+  "root_matches": true,
+  "record": {
+    "as_of": "2026-09-26T06:19:20Z",
+    "n_capsules": 33,
+    "merkle_root": "bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436",
+    "capsules_file_sha256": "ba413e8160120205d8b9ec87fec95fa9e0f3ac2e6c858d4e6e807851882cd661",
+    "states": {
+      "FAILED": 8,
+      "UNCHECKABLE": 12,
+      "VERIFIED": 13
+    },
+    "matches": {
+      "n_capsules": true,
+      "merkle_root": true,
+      "capsules_file_sha256": true,
+      "states": true
+    }
+  }
 }
