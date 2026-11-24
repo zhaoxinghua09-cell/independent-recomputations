@@ -1,0 +1,93 @@
+{
+  "repository": "zhaoxinghua09-cell/independent-recomputations",
+  "generated_by": "make_manifest.py",
+  "runtime": "Python 3 standard library only; no network for the checks themselves",
+  "inputs": {
+    "vectors.json": {
+      "file": "data/vectors.json",
+      "sha256": "1b1e6706681755740faa85966ece46150ffc70ba452113dc9ae05eb2357d63eb",
+      "bytes": 72367,
+      "source_pinned": true
+    },
+    "a2a_card.capsules.jsonl.gz": {
+      "file": "data/a2a_card.capsules.jsonl.gz",
+      "sha256": "ba413e8160120205d8b9ec87fec95fa9e0f3ac2e6c858d4e6e807851882cd661",
+      "bytes": 7916,
+      "source_pinned": true
+    },
+    "a2a_card.record.json": {
+      "file": "data/a2a_card.record.json",
+      "sha256": "180a16f838f33372e1e6345fb272d7b3427a55dacee5571c34a6947a116cc6b6",
+      "bytes": 3338,
+      "source_pinned": true
+    }
+  },
+  "checks": [
+    {
+      "id": "tsd-all-vectors",
+      "entry": "tsd_digest.py",
+      "spec": "mcp-tool-set-digest/1 (editors' draft 2026-11-23)",
+      "profile": "conformance",
+      "vector_file": "data/vectors.json",
+      "case_count": 92,
+      "expect_file": "expected/out_vectors.json",
+      "asserts": "canonical text, both written forms of each digest, and the six error codes"
+    },
+    {
+      "id": "tsd-three-target",
+      "entry": "tsd_digest.py --ids extras-present,extras-annotation-flipped,extras-contract-changed",
+      "spec": "mcp-tool-set-digest/1",
+      "profile": "conformance",
+      "vector_file": "data/vectors.json",
+      "case_count": 3,
+      "expect_file": "expected/out_three.json",
+      "asserts": "the three digests quoted in the reply to the editor"
+    },
+    {
+      "id": "capsule-batch",
+      "entry": "capsule_batch.py --record data/a2a_card.record.json",
+      "spec": "draft-templeman-scitt-measurement-capsule-01 + RFC 9162 s2.1.1 + RFC 8785",
+      "profile": "recomputation",
+      "vector_file": "data/a2a_card.capsules.jsonl.gz",
+      "case_count": 33,
+      "expect_file": "expected/out_batch.json",
+      "asserts": "capsule_id recomputation, JCS line bytes, ordering, RFC 9162 root, and the record's n_capsules / merkle_root / file SHA-256 / state counts"
+    },
+    {
+      "id": "discrimination",
+      "entry": "tamper_test.py",
+      "spec": "metamorphic: a wrong witness must fail",
+      "profile": "negative",
+      "vector_file": "inline mutations",
+      "case_count": 5,
+      "expect_file": "expected/tamper.json",
+      "asserts": "five mutations (capsule_id, record root, expected root, published digest) each return non-zero"
+    },
+    {
+      "id": "end-to-end",
+      "entry": "verify.py",
+      "spec": "this manifest",
+      "profile": "orchestration",
+      "vector_file": "all of the above",
+      "case_count": 7,
+      "expect_file": "expected/verify.log",
+      "asserts": "seven steps PASS, exit code 0"
+    }
+  ],
+  "coverage": {
+    "covered": [
+      "identifier recomputation",
+      "canonical line bytes",
+      "ordering and duplicate detection",
+      "RFC 9162 set root",
+      "record-stated values (n, root, file SHA-256, state counts)",
+      "published vector conformance for both digests"
+    ],
+    "not_covered": [
+      "signature checks the capsules report (a claim inside each capsule)",
+      "signatures on record.signed.json and index.signed.json",
+      "timestamp proofs (record.json.ots, index.json.ots)",
+      "what any MCP server does at runtime"
+    ]
+  }
+}

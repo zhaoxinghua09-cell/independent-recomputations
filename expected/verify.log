@@ -1,0 +1,9 @@
+PASS  fetch inputs, pin SHA-256                        
+PASS  92 published vectors                             
+PASS  three target vectors                             
+PASS  three vectors equal shipped expectation          
+PASS  33 capsules, root, record four values            
+PASS  batch result equal shipped expectation           
+PASS  tamper tests (checks must fail on bad evidence)  PASS one published vector's expected digest altered   rc=1
+
+7 of 7 checks PASS

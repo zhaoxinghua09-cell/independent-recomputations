@@ -4,6 +4,28 @@ Two checks written from specification text alone, so that someone other than the
 them and see the same numbers. Standard library only, Python 3, no credentials, no network for the
 checks themselves.
 
+One command runs everything: `python verify.py` (fetch, check, compare, and five tamper cases that
+must fail). `manifest.json` is the machine-readable index of what is checked, against which
+specification, with how many cases and the SHA-256 of every input; `SHA256SUMS` pins the code.
+CI runs both on Ubuntu, Windows and macOS under Python 3.10, 3.12 and 3.13, because a claim about
+portability is only worth the platforms it was actually run on.
+
+## 0. Conformance manifest
+
+| id | what it asserts | cases | where |
+|---|---|---|---|
+| `tsd-all-vectors` | canonical text, both digest forms, six error codes | 92 | `tsd_digest.py` |
+| `tsd-three-target` | the three digests quoted in the reply | 3 | `tsd_digest.py --ids …` |
+| `capsule-batch` | identifiers, JCS line bytes, order, RFC 9162 root, and the record's four stated values | 33 | `capsule_batch.py` |
+| `discrimination` | a wrong witness must fail: 4 mutations + 1 baseline | 5 | `tamper_test.py` |
+| `end-to-end` | the seven steps above, in order, exit code 0 | 7 | `verify.py` |
+
+Coverage is stated as a field rather than left to inference: this package covers identifier
+recomputation, canonical bytes, ordering, the set root, the record's stated values and vector
+conformance. It does **not** cover the signature checks the capsules report, the signatures on
+`record.signed.json` / `index.signed.json`, the timestamp proofs, or what any MCP server does at
+runtime. See the `coverage` member of `manifest.json`.
+
 ## 1. `mcp-tool-set-digest/1` — contract digest and extras digest
 
 `tsd_digest.py` implements the two digests of the editors' draft *MCP tool-set digest, version 1*
@@ -55,16 +77,36 @@ the published root agrees with that. The draft text does not say which construct
 ## Run everything
 
 ```
+python verify.py
+```
+
+That fetches the three inputs, pins their SHA-256, runs the 92 vectors, the three target vectors,
+the batch with the record cross-check, compares each output against the shipped `expected/` file,
+and runs the tamper cases. It prints one line per step and exits 0 only if all seven pass.
+
+The individual commands, if you want them separately:
+
+```
 python fetch_data.py
 python tsd_digest.py --vectors data/vectors.json --out expected/out_vectors.json
 python capsule_batch.py --file data/a2a_card.capsules.jsonl.gz \
     --expect-root bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436 \
     --record data/a2a_card.record.json \
     --out expected/out_batch.json
+python tamper_test.py
 ```
 
 Exit code 0 from each command means the published values were reproduced. `expected/run.log`
-records one run of both commands on a Linux host with Python 3.12.11.
+records one run of the commands on a Linux host with Python 3.12.11, `expected/verify.log` one run
+of `verify.py`, and `expected/tamper.json` the tamper verdicts.
+
+## Why the tamper cases are here
+
+A check that only passes the honest input says nothing about whether it would have caught a
+dishonest one. `tamper_test.py` mutates exactly one thing each time — a `capsule_id`, the record's
+`merkle_root`, the expected root, one published digest — and requires the corresponding check to
+exit non-zero. Four mutations and one baseline; all five must behave. Without that, "the root
+matches" is a statement about our code agreeing with itself.
 
 ## What these checks do not show
 

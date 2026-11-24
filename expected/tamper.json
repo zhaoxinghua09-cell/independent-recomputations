@@ -1,0 +1,35 @@
+{
+  "cases": [
+    {
+      "case": "baseline (untouched evidence)",
+      "expected_rc": 0,
+      "got_rc": 0,
+      "verdict": "PASS"
+    },
+    {
+      "case": "one capsule_id replaced by zeros",
+      "expected_rc": "non-zero",
+      "got_rc": 1,
+      "verdict": "PASS"
+    },
+    {
+      "case": "record claims a different merkle_root",
+      "expected_rc": "non-zero",
+      "got_rc": 1,
+      "verdict": "PASS"
+    },
+    {
+      "case": "expected root wrong",
+      "expected_rc": "non-zero",
+      "got_rc": 1,
+      "verdict": "PASS"
+    },
+    {
+      "case": "one published vector's expected digest altered",
+      "expected_rc": "non-zero",
+      "got_rc": 1,
+      "verdict": "PASS"
+    }
+  ],
+  "verdict": "PASS"
+}

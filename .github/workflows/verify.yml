@@ -1,0 +1,23 @@
+name: verify
+on:
+  push:
+  pull_request:
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python: ["3.10", "3.12", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: standard library only, no dependencies to install
+        run: python -c "import sys; print(sys.version)"
+      - name: fetch, check, compare, tamper
+        run: python verify.py
+      - name: show the two published results
+        run: python capsule_batch.py --file data/a2a_card.capsules.jsonl.gz --expect-root bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436 --record data/a2a_card.record.json
