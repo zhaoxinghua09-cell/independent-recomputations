@@ -55,6 +55,12 @@ def main():
     rc, out, err = run([PY, "tamper_test.py"])
     add("tamper tests (checks must fail on bad evidence)", rc == 0, (err or out.splitlines()[-1] if out else "")[:80])
 
+    out_i = WORK / "inclusion.json"
+    rc, _, err = run([PY, "inclusion.py", "--file", "data/a2a_card.capsules.jsonl.gz",
+                      "--expect-root", ROOT, "--out", str(out_i)])
+    add("33 per-leaf inclusion proofs re-derive the published root", rc == 0, err[:80])
+    add("inclusion proofs equal shipped expectation", same_json(out_i, HERE / "expected" / "inclusion.json"))
+
     width = max(len(r[0]) for r in rows)
     for name, verdict, detail in rows:
         print(f"{verdict:4s}  {name:<{width}}  {detail}")

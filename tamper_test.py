@@ -78,6 +78,17 @@ def main():
     cases.append({"case": "one published vector's expected digest altered", "expected_rc": "non-zero",
                   "got_rc": rc, "verdict": "PASS" if rc != 0 else "FAIL"})
 
+    # flip one byte in one shipped inclusion path: the proof must stop re-deriving the root
+    inc = json.loads((HERE / "expected" / "inclusion.json").read_text(encoding="utf-8"))
+    hexits = inc["proofs"][12]["path"][0]
+    flipped = ("0" if hexits[0] != "0" else "1") + hexits[1:]
+    inc["proofs"][12]["path"][0] = flipped
+    bad_inc = tmp / "inclusion_flipped.json"
+    bad_inc.write_text(json.dumps(inc, ensure_ascii=False), encoding="utf-8")
+    rc, _ = run([PY, "inclusion.py", "--expect-root", ROOT, "--verify-file", str(bad_inc)])
+    cases.append({"case": "one byte of one inclusion path flipped", "expected_rc": "non-zero",
+                  "got_rc": rc, "verdict": "PASS" if rc != 0 else "FAIL"})
+
     ok = all(c["verdict"] == "PASS" for c in cases)
     result = {"cases": cases, "verdict": "PASS" if ok else "FAIL"}
     (HERE / "expected" / "tamper.json").write_text(json.dumps(result, ensure_ascii=False, indent=2),

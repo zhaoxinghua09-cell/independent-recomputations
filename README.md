@@ -17,8 +17,9 @@ portability is only worth the platforms it was actually run on.
 | `tsd-all-vectors` | canonical text, both digest forms, six error codes | 92 | `tsd_digest.py` |
 | `tsd-three-target` | the three digests quoted in the reply | 3 | `tsd_digest.py --ids …` |
 | `capsule-batch` | identifiers, JCS line bytes, order, RFC 9162 root, and the record's four stated values | 33 | `capsule_batch.py` |
-| `discrimination` | a wrong witness must fail: 4 mutations + 1 baseline | 5 | `tamper_test.py` |
-| `end-to-end` | the seven steps above, in order, exit code 0 | 7 | `verify.py` |
+| `inclusion-proofs` | one inclusion path per capsule, each re-deriving the published root from leaf + index + path alone | 33 | `inclusion.py` |
+| `discrimination` | a wrong witness must fail: 5 mutations + 1 baseline | 6 | `tamper_test.py` |
+| `end-to-end` | the nine steps above, in order, exit code 0 | 9 | `verify.py` |
 
 Coverage is stated as a field rather than left to inference: this package covers identifier
 recomputation, canonical bytes, ordering, the set root, the record's stated values and vector
@@ -74,6 +75,30 @@ count the two constructions diverge; the record states that it splits at the lar
 below `n` and hashes the single remaining leaf on its own, with nothing promoted or duplicated, and
 the published root agrees with that. The draft text does not say which construction it uses.
 
+## 2a. Inclusion proofs the publisher did not ship
+
+The batch record publishes a set root and stops there: no per-capsule path, so a reader who wants
+to show "this capsule is in that root" has to rebuild the whole tree. `inclusion.py` derives the
+RFC 9162 section 2.1.3 path for every capsule and then runs the section 2.1.4.2 verifier — the
+algorithm an outside reader would run — on each one:
+
+```
+python inclusion.py --file data/a2a_card.capsules.jsonl.gz \
+    --expect-root bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436 \
+    --out expected/inclusion.json
+
+python inclusion.py --expect-root bf12f4ad340a11a14ecbd359ba90b3aaebb36bb75bcf9e11f433148441bae436 \
+    --verify-file expected/inclusion.json      # 33/33 re-verified, no batch file needed
+```
+
+33 paths, each 5–6 hashes long; every one re-derives `bf12f4ad…` from its leaf, index and path
+alone. One control is included: a leaf that is not in the batch, placed at index 0 with a real
+path, must **not** verify — it does not.
+
+This is a derivation, not a published fact: the paths are computed by this code from the published
+order, so a reader should re-derive them rather than trust the shipped JSON. `--verify-file` exists
+exactly for that, and `tamper_test.py` flips one byte of one path to show the verifier notices.
+
 ## Run everything
 
 ```
@@ -82,7 +107,7 @@ python verify.py
 
 That fetches the three inputs, pins their SHA-256, runs the 92 vectors, the three target vectors,
 the batch with the record cross-check, compares each output against the shipped `expected/` file,
-and runs the tamper cases. It prints one line per step and exits 0 only if all seven pass.
+and runs the tamper cases, and derives plus re-verifies the 33 inclusion proofs. It prints one line per step and exits 0 only if all nine pass.
 
 The individual commands, if you want them separately:
 

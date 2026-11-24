@@ -54,14 +54,24 @@
       "asserts": "capsule_id recomputation, JCS line bytes, ordering, RFC 9162 root, and the record's n_capsules / merkle_root / file SHA-256 / state counts"
     },
     {
+      "id": "inclusion-proofs",
+      "entry": "inclusion.py",
+      "spec": "RFC 9162 s2.1.3 PATH + s2.1.4.2 root-from-path",
+      "profile": "derivation",
+      "vector_file": "data/a2a_card.capsules.jsonl.gz",
+      "case_count": 33,
+      "expect_file": "expected/inclusion.json",
+      "asserts": "one inclusion path per capsule (33), each re-deriving the published root from leaf, index and path alone; plus an outsider leaf that must not verify"
+    },
+    {
       "id": "discrimination",
       "entry": "tamper_test.py",
       "spec": "metamorphic: a wrong witness must fail",
       "profile": "negative",
       "vector_file": "inline mutations",
-      "case_count": 5,
+      "case_count": 6,
       "expect_file": "expected/tamper.json",
-      "asserts": "five mutations (capsule_id, record root, expected root, published digest) each return non-zero"
+      "asserts": "six mutations (capsule_id, record root, expected root, published digest, one flipped byte of one inclusion path, baseline) each return the required exit code"
     },
     {
       "id": "end-to-end",
@@ -69,9 +79,9 @@
       "spec": "this manifest",
       "profile": "orchestration",
       "vector_file": "all of the above",
-      "case_count": 7,
+      "case_count": 9,
       "expect_file": "expected/verify.log",
-      "asserts": "seven steps PASS, exit code 0"
+      "asserts": "nine steps PASS, exit code 0"
     }
   ],
   "coverage": {
@@ -81,6 +91,7 @@
       "ordering and duplicate detection",
       "RFC 9162 set root",
       "record-stated values (n, root, file SHA-256, state counts)",
+      "per-capsule inclusion proofs against the published root (RFC 9162 s2.1.3/2.1.4.2)",
       "published vector conformance for both digests"
     ],
     "not_covered": [

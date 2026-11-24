@@ -29,6 +29,12 @@
       "expected_rc": "non-zero",
       "got_rc": 1,
       "verdict": "PASS"
+    },
+    {
+      "case": "one byte of one inclusion path flipped",
+      "expected_rc": "non-zero",
+      "got_rc": 1,
+      "verdict": "PASS"
     }
   ],
   "verdict": "PASS"
